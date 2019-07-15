@@ -52,4 +52,19 @@ server.post('/api/accounts', async (req, res) => {
   }
 })
 
+server.delete('/api/accounts/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const account = await db('accounts').where({ id }).del();
+    if (account) {
+      res.json({message: 'Deleted Successfully'});
+    } else {
+      res.status(404).json({ message: 'Could not find account with given id.' })
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to delete account' });
+  }
+});
+
 module.exports = server;
