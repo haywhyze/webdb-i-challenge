@@ -32,4 +32,24 @@ server.get('/api/accounts/:id', async (req, res) => {
   }
 });
 
+server.post('/api/accounts', async (req, res) => {
+  const { name, budget } = req.body;
+
+  if (!name || !budget) {
+    res.status(400).json({ errorMessage: 'name and budget field is required' });
+  }
+  else {
+    try {
+      const [newAccountId] = await db('accounts').insert({ name, budget });
+      if (newAccountId) {
+        const newAccount = await db('accounts').where({ id: newAccountId });
+        res.json(newAccount);
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Failed to create account' });
+    }
+  }
+})
+
 module.exports = server;
