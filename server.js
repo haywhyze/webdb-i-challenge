@@ -67,4 +67,29 @@ server.delete('/api/accounts/:id', async (req, res) => {
   }
 });
 
+server.put('/api/accounts/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, budget } = req.body;
+
+  if (!name || !budget) {
+    res.status(400).json({ errorMessage: 'name and budget field is required' });
+  }
+  else {
+    try {
+      console.log(id, name, budget);
+      const updateResponse = await db('accounts').where({ id }).update({
+        name, budget
+      });
+      console.log(updateResponse);
+      if (updateResponse) {
+        const updatedAccount = await db('accounts').where({ id });
+        res.json(updatedAccount);
+      }
+    } catch (error) {
+      console.log(error)
+      res.status(500).json({ message: 'Failed to update account' });
+    }
+  }
+})
+
 module.exports = server;
