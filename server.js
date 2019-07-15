@@ -17,4 +17,19 @@ server.get('/api/accounts', async (req, res) => {
   }
 });
 
+server.get('/api/accounts/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const account = await db('accounts').where({ id });
+    if (account.length) {
+      res.json(account);
+    } else {
+      res.status(404).json({ message: 'Could not find account with given id.' })
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to get account' });
+  }
+});
+
 module.exports = server;
